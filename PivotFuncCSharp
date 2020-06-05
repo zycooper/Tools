@@ -1,0 +1,119 @@
+public enum PivotFuncName { Count, Sum, Avg, Mid }
+
+public class PivotFunc
+{
+    public PivotFuncName funcname { get; set; }
+    public string PivotFuncColumnName { get; set; }
+}
+
+public static DataTable GetPivotDataTable(DataTable Source_Tbl, string columnX, string columnY, bool X_axis_asc = true, bool y_axis_asc = true,PivotFunc func = null)
+{
+    PivotFunc _pivotfunc =(func == null) ? new PivotFunc() { funcname = PivotFuncName.Count } : func;
+  
+    if (!string.IsNullOrEmpty(columnX) && !string.IsNullOrEmpty(columnY))
+    {                
+        //distinct value for x-axis
+        var X_axis_values = X_axis_asc ? Source_Tbl.AsEnumerable().Select(r => r[columnX]).Distinct().OrderBy(i => i).ToList() : Source_Tbl.AsEnumerable().Select(r => r[columnX]).Distinct().OrderByDescending(i=>i).ToList();
+
+        //distinct value for y-axis
+        var Y_axis_values = y_axis_asc ? Source_Tbl.AsEnumerable().Select(r => r[columnY]).Distinct().OrderBy(i => i).ToList() : Source_Tbl.AsEnumerable().Select(r => r[columnY]).Distinct().OrderByDescending(i=>i).ToList();
+
+        //Final Table
+        DataTable returnTable = new DataTable();
+
+        //Add x-axis title
+        returnTable.Columns.Add(columnY);
+
+        //Add total column for each row
+        returnTable.Columns.Add("Total");
+
+        //Add x-axis value
+        X_axis_values.ForEach(x => returnTable.Columns.Add(x.ToString()));
+
+        for (int i = 0; i < Y_axis_values.Count; i++)
+        {
+            //add first value of y-aixs for each row
+            DataRow row = returnTable.NewRow();
+            row[0] = Y_axis_values[i].ToString();
+            row[1] = 0;
+            for (int j = 0; j < X_axis_values.Count; j++)
+            {
+                string Y_axis_value = Y_axis_values[i].ToString().Replace("'", "''");
+                string X_axis_value = X_axis_values[j].ToString().Replace("'", "''");
+
+                string expression = columnX + "='" + X_axis_value + "' AND " + columnY + "='" + Y_axis_value + "'";
+                DataRow[] rows= Source_Tbl.Select(expression).ToArray();
+
+                //assign value
+                switch (_pivotfunc.funcname)
+                {
+                    case PivotFuncName.Count:                                
+                        if (rows.Count()!=0)
+                        {
+                            //total cell for each row
+                            row[1] = int.Parse(row[1].ToString()) + rows.Count();
+
+                            //each cell
+                            row[j + 2] = rows.Count();
+                        }                                
+                        break;
+                    case PivotFuncName.Sum:
+
+                        try
+                        {
+                            int sum = int.TryParse(Source_Tbl.Compute("SUM(" + _pivotfunc.PivotFuncColumnName + ")", expression).ToString(), out int result) ? int.Parse(Source_Tbl.Compute("SUM(" + _pivotfunc.PivotFuncColumnName + ")", expression).ToString()) : 0;
+
+                            row[1] = int.Parse(row[1].ToString()) + sum;
+
+                            row[j + 2] = sum;
+                        }
+                        catch (Exception)
+                        {                                   
+                        }
+
+                        break;
+                    case PivotFuncName.Avg:
+                        break;
+                    case PivotFuncName.Mid:
+                        break;
+                    default:                          
+                        if (rows.Count() != 0)
+                        {
+                            row[1] = int.Parse(row[1].ToString()) + rows.Count();
+                            row[j + 2] = rows.Count();
+                        }
+                        break;
+                }
+                
+            }
+
+            returnTable.Rows.Add(row);
+        }
+
+        DataRow TotalRow = returnTable.NewRow();
+        TotalRow[0] = "Total";
+
+        for (int i = 1; i < returnTable.Columns.Count; i++)
+        {
+            double total = 0;
+
+            for (int j = 0; j < returnTable.Rows.Count; j++)
+            {
+                if (double.TryParse(returnTable.Rows[j][i].ToString(),out double result))
+                {
+                    total += double.Parse(returnTable.Rows[j][i].ToString());
+                }
+            }
+
+            TotalRow[i] = total;
+        }
+
+        returnTable.Rows.Add(TotalRow);
+
+        return returnTable;
+    }
+    else
+    {
+        return null;
+    }         
+}
