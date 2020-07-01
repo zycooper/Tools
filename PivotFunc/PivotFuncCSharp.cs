@@ -1,3 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Tools.Pivot{    
     public enum PivotFuncName { Count, Sum, Avg, Min, Max }
     public class PivotFunc
     {
@@ -209,3 +217,4 @@
             }
         }
     }
+}

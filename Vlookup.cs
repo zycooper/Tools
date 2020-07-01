@@ -9,7 +9,8 @@ namespace Tools.Vlookup
 {
     public class Vlookup
     {
-           static public int NetWorkDays(DateTime From, DateTime To, bool CountWeekends, bool CountHoliday, List<DateTime> HolidayList)
+        //more complex one, you can pass your own holiday list to it
+        static public int NetWorkDays(DateTime From, DateTime To, bool CountWeekends, bool CountHoliday, List<DateTime> HolidayList)
         {
             //CountWeekends CountHoliday : if true, it will include weekends and holiday in the networkdays
             int Span = 0;
@@ -50,7 +51,8 @@ namespace Tools.Vlookup
                 return NetWorkDays;
             }
         }
-        static public int NetWorkDays(DateTime From, DateTime To, bool CountWeekends)
+        //simple one, no holiday include, just configure do you want to exclude weekends or not
+        static public int NetWorkDays(DateTime From, DateTime To, bool CountWeekends = false)
         {
             //CountWeekends CountHoliday : if true, it will include weekends and holiday in the networkdays
             int Span = 0;
