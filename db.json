@@ -1,4 +1,5 @@
-[{
+{
+  "data":[{
     "ProviderType": "GERIATRIC MENTAL HEALTH SERVICES CONTRACTS",
     "DFTA ID": "5G301",
     "ProgramName": "WEILL CORNELL MENTAL HEALTH",
@@ -142,3 +143,4 @@
     "NTA": "Belmont",
     "Location1": "(40.860739, -73.889585)"
   }]
+}
