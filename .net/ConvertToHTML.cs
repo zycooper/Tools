@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SMS_Dev_Tool
+namespace Tool
 {
     static public class ConvertToHtml
     {
