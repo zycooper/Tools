@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace SMS_Dev_Tool
+namespace Tool
 {
     //send Email
     public class EmailSourceUnit
