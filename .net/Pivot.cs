@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace SMS_Dev_Tool
+namespace Tool
 {
     public enum PivotFuncName { Count, Sum, Avg, Min, Max, CountDistinct }
     public class PivotFunc
